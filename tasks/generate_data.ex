@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Countriex.GenerateData do
 
   def run(_) do
     data_from_url()
-    |> Map.values
+    |> Map.values()
     |> parse
     |> sort
     |> generate_file_content
@@ -13,10 +13,10 @@ defmodule Mix.Tasks.Countriex.GenerateData do
   end
 
   defp data_from_url do
-    HTTPoison.start
+    HTTPoison.start()
 
     @countries_json_url
-    |> HTTPoison.get!
+    |> HTTPoison.get!()
     |> Map.get(:body)
     |> Poison.decode!(keys: :atoms)
   end
@@ -27,19 +27,23 @@ defmodule Mix.Tasks.Countriex.GenerateData do
 
   defp parse(data) when is_map(data) do
     geo = data.geo |> parse_geo
-    %Country{} |> Map.merge(data) |> Map.merge(%{geo: geo})
+
+    %Country{}
+    |> struct!(data)
+    |> struct!(geo: geo)
   end
 
   defp parse_geo(geo_data) do
     %Geo{
-      latitude:       geo_data.latitude |> to_float,
-      latitude_dec:   geo_data.latitude_dec |> to_float,
-      longitude:      geo_data.longitude |> to_float,
-      longitude_dec:  geo_data.longitude_dec |> to_float,
-      max_latitude:   geo_data.max_latitude |> to_float,
-      max_longitude:  geo_data.max_longitude |> to_float,
-      min_latitude:   geo_data.min_latitude |> to_float,
-      min_longitude:  geo_data.min_longitude |> to_float,
+      latitude: geo_data.latitude |> to_float,
+      latitude_dec: geo_data.latitude_dec |> to_float,
+      longitude: geo_data.longitude |> to_float,
+      longitude_dec: geo_data.longitude_dec |> to_float,
+      max_latitude: geo_data.max_latitude |> to_float,
+      max_longitude: geo_data.max_longitude |> to_float,
+      min_latitude: geo_data.min_latitude |> to_float,
+      min_longitude: geo_data.min_longitude |> to_float,
+      bounds: geo_data.bounds
     }
   end
 
@@ -66,6 +70,7 @@ defmodule Mix.Tasks.Countriex.GenerateData do
   defp to_float(nil), do: nil
   defp to_float(val) when is_integer(val), do: val / 1.0
   defp to_float(val) when is_float(val), do: val
+
   defp to_float(str) do
     {result, _} = Float.parse(str)
     result
