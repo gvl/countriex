@@ -6,7 +6,7 @@ defmodule Countriex do
   @doc """
   Returns all country data
   """
-  def all, do: Countriex.Data.countries
+  def all, do: Countriex.Data.countries()
 
   @doc """
   Returns the first matching country with the given criteria, or `nil` if a country with that data does not exist.
@@ -23,7 +23,8 @@ defmodule Countriex do
       iex> Countriex.get_by(:foo, "XX")
       nil
   """
-  def get_by(field, value), do: all() |> Enum.find(fn country -> matches?(country, field, value) end)
+  def get_by(field, value),
+    do: all() |> Enum.find(fn country -> matches?(country, field, value) end)
 
   @doc """
   Returns all countries matching the given criteria, or `[]` if the criteria does not match any countries
@@ -39,7 +40,8 @@ defmodule Countriex do
       iex> Countriex.filter(:region, "foo")
       []
   """
-  def filter(field, value), do: all() |> Enum.filter(fn country -> matches?(country, field, value) end)
+  def filter(field, value),
+    do: all() |> Enum.filter(fn country -> matches?(country, field, value) end)
 
   defp matches?(country, field, value), do: Map.get(country, field) == value
 end

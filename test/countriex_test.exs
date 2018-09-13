@@ -4,7 +4,7 @@ defmodule CountriexTest do
 
   describe "all/0" do
     test "returns all countries" do
-      countries = Countriex.all
+      countries = Countriex.all()
 
       assert countries |> length == 249
     end
